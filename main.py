@@ -23,15 +23,12 @@ def main():
             break
         program_lines.append(line.strip())
 
-    # Just printing to confirm
-    print("\n=== Initial Setup Complete ===")
-    print("Registers:", registers)
-    print("Program:")
+    
+    print("\n=== Configuração da máquina concluída ===")
+    print("Registradores: ", registers)
+    print("Linhas de comando: ")
     for line in program_lines:
         print("  ", line)
-
-    # Here later you can call your NORMA machine logic
-    # e.g. run_norma(registers, program_lines)
 
 
 if __name__ == "__main__":
