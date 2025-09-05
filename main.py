@@ -1,35 +1,50 @@
+import norma_compiler
+
 def main():
-    print("=== Simulador de Máquina NORMA ===")
+    print(".:|=== Simulador de Máquina NORMA ===|:.")
 
     # Primeiro vamos pedir ao usuário a quantidade de registradores que ele vai precisar usar
-    registersQnt = int(input("Enter the number of registers: "))
+    register_qnt = int(input("Digite a quantidade de registradores: "))
 
-    # Loop pra ele preencher os valores dos registradores
+    # Loop para preencher os valores dos registradores
     registers = {}
-    for i in range(registersQnt):
+    for i in range(register_qnt):
         # Os registradores serão simbolizados por números, fica mais simples pra gente
-        startValue = int(input(f"Digite um valor inicial para o registrador {i}: "))
-        registers[i] = startValue
+        start_value = int(input(f"Digite um valor inicial para o registrador {i}: "))
+        registers[i] = start_value
 
-    # Aqui o usuário vai colcar, ou se ele quiser digitar, o comando pra rodar no nosso simulador de máquina normal
-
-    # Fiz com que ele pudesse só colar todo script ou se ele quiser ficar digitando e dando ENTER, também funciona.
-    # Dai pra para de entrar código, final do código, ele da um ENTER vazio. 
-    print("\nVocê pode digitar linha por linha ou colar o código inteiro, quando terminar dê ENTER sem conteúdo \nDigite o script: ")
-    program_lines = []
+    # Aqui o usuário pode colar ou digitar linha por linha o comando para rodar no simulador
+    # Para encerrar, basta dar ENTER vazio
+    print("\nVocê pode digitar linha por linha ou colar o código inteiro,")
+    print("quando terminar dê ENTER sem conteúdo.\nDigite o script: ")
+    command_lines = []
     while True:
         line = input()
         if not line.strip():
             break
-        program_lines.append(line.strip())
+        command_lines.append(line.strip())
 
-    
-    print("\n=== Configuração da máquina concluída ===")
-    print("Registradores: ", registers)
-    print("Linhas de comando: ")
-    for line in program_lines:
+    print("\n.:|=== Configuração da máquina concluída ===|:.")
+    print("Registradores:", registers)
+    print("Linhas de comando:")
+    for line in command_lines:
         print("  ", line)
+
+    # TODO apagar a linha de teste
+    test_lines = ["1: se zero_b então vá_para 9 senão vá_para 2",
+"2: faça add_a vá_para 3",
+"3: faça add_a vá_para 4",
+"4: faça sub_b vá_para 1"]
+    
+    norma_compiler.run(registers, test_lines)
 
 
 if __name__ == "__main__":
     main()
+
+
+
+# 1: se zero_b então vá_para 9 senão vá_para 2
+# 2: faça add_a vá_para 3
+# 3: faça add_a vá_para 4
+# 4: faça sub_b vá_para 1
