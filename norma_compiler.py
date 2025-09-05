@@ -4,11 +4,11 @@ from norma_commands import NormaCommand
 def run(registers: dict, typed_lines: list):
     
     # Vamos converter as linhas digitas para um formato que nossa máquina possa interpretar corretamente.
-    command_lines = convert_typed_lines_to_command_lines(typed_lines)
+    program = convert_typed_lines_to_command_lines(typed_lines)
 
 
     # Começa pelo menor rótulo, normalmente é 0 ou 1 mas o usuário pode acabar querendo começar pelo 7...
-    program_counter = min(command_lines.keys())
+    program_counter = min(program.keys())
 
     # Aqui está toda jogada, vamos iniciar somente uma instrução. Faremos o resto recursivo
     # Porque cada instrução nela mesma contém para qual rótulo deve seguir, então ela mesma vai decidir a próxima etapa
@@ -16,7 +16,7 @@ def run(registers: dict, typed_lines: list):
     # para o rótulo inexistente, ou nao definido, assim, quando acontecer um OutOfBoundException sabemos que 
     # a instrução está levando para um condição de parada.
     try:
-        interpret(registers, command_lines, program_counter)
+        interpret(registers, program, program_counter)
 
     except KeyError:
         # Parada do programa quando rótulo não existe
