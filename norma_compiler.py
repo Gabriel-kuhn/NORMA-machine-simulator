@@ -18,10 +18,13 @@ def run(registers: dict, typed_lines: list):
     try:
         interpret(registers, program, program_counter)
 
-    except KeyError:
-        # Parada do programa quando rótulo não existe
-        print("\n.:|=== Execução finalizada ===|:.")
-        print("Registradores finais:", registers)
+    # Parada do programa quando rótulo não existe
+    except KeyError as error:
+        # Como o nosso erro ocorre quando é usado um valor fora do array de operações
+        # Esse endereço fora dos limites (condição de parada) é o rótulo final do programa    
+        program_counter = error.args[0]
+        computed_registers = tuple(registers.values())
+        print(f"({program_counter}, {computed_registers})")
 
 
 
@@ -51,9 +54,6 @@ def interpret(registers: dict, program: dict, current_label: int):
     instruction = program[current_label]
     tokenList = instruction.split()
 
-    print(f"\n{current_label}: {instruction}")
-    print(registers)
-
     command_token = get_command_token(tokenList)
     
     match command_token:
@@ -65,25 +65,36 @@ def interpret(registers: dict, program: dict, current_label: int):
 
             if zero_x(registers, reg):
                 next_label = next_label_true
+                computed_op_desc = f"em {current_label}, como {reg} = 0, desviou para {next_label}"
             else:
                 next_label = next_label_false
+                computed_op_desc = f"em {current_label}, como {reg} <> 0, desviou para {next_label}"
             
         case NormaCommand.ADD:
             reg = tokenList[1][-1]  # pega a letra do registrador (segundo item add_b e pega ultimo digito b) assim sabemos o registrador da operação 
             add_x(registers, reg)
             next_label = int(tokenList[3])  # pega o rótulo de "vá_para"
+            computed_op_desc = f"subiu 1 no registrador {reg} e desviou para {next_label}"
 
 
         case NormaCommand.SUB:
             reg = tokenList[1][-1] # pega a letra do registrador (segundo item sub_b e pega ultimo digito b) assim sabemos o registrador da operação 
             sub_x(registers, reg)
             next_label = int(tokenList[3])  # pega o rótulo de "vá_para"
-
+            computed_op_desc = f"subiu 1 no registrador {reg} e desviou para {next_label}"
 
         # Como se fosse o else do java, serve para tratar valores inesperados nos cases anteriores
         case _:
             print(next_label)
             raise ValueError(f"Comando inválido: {command_token}")
+        
+
+
+    # Vamos mostrar a computação do rótulo atual, para isso vamos
+    # a saída para o terminal    
+    computed_registers = tuple(registers.values())
+    computed_line = f"({current_label}, {computed_registers}) " 
+    print(computed_line + computed_op_desc)
 
 
     # Chamada recursiva para a próxima instrução referente ao valor de next_label
