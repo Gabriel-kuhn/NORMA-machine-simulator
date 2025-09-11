@@ -4,39 +4,30 @@ from terminal_cleaner import TerminalOperator
 def main():
     print(".:|=== Simulador de Máquina NORMA ===|:.")
 
-    # Primeiro vamos pedir ao usuário a quantidade de registradores que ele vai precisar usar
-    register_qnt = int(input("Digite a quantidade de registradores: "))
-
-    # Loop para preencher os valores dos registradores
     registers = {}
-    for i in range(register_qnt):
-        # Vamos usar simbolos Alfanuméricos para representar os registradores
-        # Fica mais simples pro usuário. Mas pra isso precisamos converter para char
-        name = chr(ord('a') + i)
-        start_value = int(input(f"Digite um valor inicial para o registrador {name}: "))
-        registers[name] = start_value
-
-    # Aqui o usuário pode colar ou digitar linha por linha o comando para rodar no simulador
-    # Para encerrar, basta dar ENTER vazio
-    print("\nVocê pode digitar linha por linha ou colar o código inteiro,")
-    print("quando terminar dê ENTER sem conteúdo.\nDigite o script: ")
     command_lines = []
-    while True:
-        line = input()
-        if not line.strip():
-            break
-        command_lines.append(line.strip())
+
+    # Aqui a gente vai ler o programa que vai rodar na nossa máquina NORMA de um arquivo de texto fixo no projeto
+    # A primeira linha do arquivo são os valores iniciais dos registradores
+    # As demais linhas são referentes as instruções do programa (basicamente o programa em si)
+    with open("program.txt", "r", encoding="utf-8") as f:
+        lines = [line.strip() for line in f if line.strip()]
+
+    # Setando os registradores com os valores do arquivo de texto
+    initial_values = list(map(int, lines[0].split()))
+    for i, val in enumerate(initial_values):
+        # Vamos usar símbolos alfanuméricos para representar os registradores
+        # Assim fica mais simples pro usuário. Só que precisamos converter para char
+        name = chr(ord('a') + i)
+        registers[name] = val
+
+    # O resto das linhas são o programa que será executado pela máquina
+    command_lines = lines[1:]
 
     print("\n.:|=== Configuração da máquina concluída ===|:.")
 
-    # TODO apagar a linha de teste
-    test_lines = [  "1: se zero_b então vá_para 9 senão vá_para 2",
-                    "2: faça add_a vá_para 3",
-                    "3: faça add_a vá_para 4",
-                    "4: faça sub_b vá_para 1"
-                    ]
-    
-    norma_compiler.run(registers, test_lines)
+    # chamamos nosso compiler para rodar o programa
+    norma_compiler.run(registers, command_lines)
 
 
 if __name__ == "__main__":
@@ -45,6 +36,11 @@ if __name__ == "__main__":
 
 
 
+# Exemplo de input.txt
+# Primeira linha: valores iniciais dos registradores
+# Demais linhas: instruções do programa
+#
+# 3 0
 # 1: se zero_b então vá_para 9 senão vá_para 2
 # 2: faça add_a vá_para 3
 # 3: faça add_a vá_para 4
