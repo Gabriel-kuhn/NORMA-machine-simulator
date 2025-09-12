@@ -104,31 +104,23 @@ def multiply(tokens, expanded, l1, next_free_label):
     l8 = next_free_label + 6
     next_free_label += 7
 
-    # 0: clear c
+
+    # 1: clear_c vá_para 2
+    # 2: copy_a_i vá_para 3
+    # 3: se zero_i então vá_para 9 senão vá_para 4
+    # 4: sub_i vá_para 5
+    # 5: copy_b_j vá_para 6
+    # 6: se zero_j então vá_para 3 senão vá_para 7
+    # 7: sub_j vá_para 8
+    # 8: add_c vá_para 6
+
     expanded, next_free_label = clear(['faça', f'clear_{c}', 'vá_para', l2], expanded, l1, next_free_label)
-
-    # 1: copy a -> i
     expanded, next_free_label = copy(['faça', f'copy_{a}_{i}', 'vá_para', l3], expanded, l2, next_free_label)
-
-    # # 2: copy b -> j
-    # expanded, next_free_label = copy(['faça', f'copy_{b}_{j}', 'vá_para', l4], expanded, l3, next_free_label)
-
-    # 3: se zero i então vá_para l9 senão vá_para l5
     expanded.append(f"{l3}: se zero_{i} então vá_para {final_jump} senão vá_para {l4}")
-
-    # 4: sub i
     expanded.append(f"{l4}: faça sub_{i} vá_para {l5}")
-
-    # 5: copy b -> j
     expanded, next_free_label = copy(['faça', f'copy_{b}_{j}', 'vá_para', l6], expanded, l5, next_free_label)
-
-    # 5.1: se zero j então vá_para l4 senão vá_para l8
     expanded.append(f"{l6}: se zero_{j} então vá_para {l3} senão vá_para {l7}")
-
-    # 6: sub j
     expanded.append(f"{l7}: faça sub_{j} vá_para {l8}")
-
-    # 7: add c
     expanded.append(f"{l8}: faça add_{c} vá_para {l6}")
 
     return expanded, next_free_label
