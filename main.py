@@ -1,5 +1,6 @@
 import norma_compiler
 from terminal_cleaner import TerminalOperator
+from macro_compiler import start_macro_aux_registers
 
 def main():
     print(".:|=== Simulador de Máquina NORMA ===|:.")
@@ -10,8 +11,8 @@ def main():
     # Aqui a gente vai ler o programa que vai rodar na nossa máquina NORMA de um arquivo de texto fixo no projeto
     # A primeira linha do arquivo são os valores iniciais dos registradores
     # As demais linhas são referentes as instruções do programa (basicamente o programa em si)
-    with open("program.txt", "r", encoding="utf-8") as f:
-        lines = [line.strip() for line in f if line.strip()]
+    with open("program.txt", "r", encoding="utf-8") as file:
+        lines = [line.strip() for line in file if line.strip()]
 
     # Setando os registradores com os valores do arquivo de texto
     initial_values = list(map(int, lines[0].split()))
@@ -21,27 +22,20 @@ def main():
         name = chr(ord('a') + i)
         registers[name] = val
 
+    # Vamos adicionar a nossa lista de registradores os auxiliares das macros (vão sempre inicializar em 0)
+    for aux in start_macro_aux_registers():
+        registers[aux] = 0
+
+
     # O resto das linhas são o programa que será executado pela máquina
     command_lines = lines[1:]
 
     print("\n.:|=== Configuração da máquina concluída ===|:.")
 
-    # chamamos nosso compiler para rodar o programa
+    # chamamos nosso compilador para rodar o programa
     norma_compiler.run(registers, command_lines)
 
 
 if __name__ == "__main__":
     TerminalOperator.clear()
     main()
-
-
-
-# Exemplo de input.txt
-# Primeira linha: valores iniciais dos registradores
-# Demais linhas: instruções do programa
-#
-# 3 0
-# 1: se zero_b então vá_para 9 senão vá_para 2
-# 2: faça add_a vá_para 3
-# 3: faça add_a vá_para 4
-# 4: faça sub_b vá_para 1

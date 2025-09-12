@@ -1,8 +1,13 @@
 from norma_commands import NormaCommand
+from macro_compiler import expand_macros
 
 
 def run(registers: dict, typed_lines: list):
     
+    # Vamos compilar as operações macros, vamos meio que traduzir elas, pq a norma não entende nada além de add sub e zero
+    # então precisamos traduzir para uma forma que ela consiga "ler"
+    typed_lines = expand_macros(typed_lines)
+
     # Vamos converter as linhas digitas para um formato que nossa máquina possa interpretar corretamente.
     program = convert_typed_lines_to_command_lines(typed_lines)
 
@@ -33,15 +38,16 @@ def convert_typed_lines_to_command_lines(typed_lines):
     program = {}
     
     for line in typed_lines:
-        if ":" in line:
+        if ":" in line: # Isso é uma segurança para pegar só as linhas que contém o formato (1: faça ...) 
+
             # Colocamos em um dicionário o rótulo e a instrução daquele rótulo
-            # Para isso vamos separa-los pelo "1:"" que cada linha (rótulo) tem
+            # Para isso vamos separa-los pelo "1:" que cada linha (rótulo) tem
 
             # Exemplo:
             # 4: faça sub_b vá_para 1
             # Vai virar {4, faça sub_b vá_para 1}
             label, instruction = line.split(":", 1)
-            program[int(label.strip())] = instruction.strip()
+            program[int(label.strip())] = instruction.strip() 
         
     return program
 
@@ -81,11 +87,11 @@ def interpret(registers: dict, program: dict, current_label: int):
             reg = tokenList[1][-1] # pega a letra do registrador (segundo item sub_b e pega ultimo digito b) assim sabemos o registrador da operação 
             sub_x(registers, reg)
             next_label = int(tokenList[3])  # pega o rótulo de "vá_para"
-            computed_op_desc = f"subiu 1 no registrador {reg} e desviou para {next_label}"
+            computed_op_desc = f"diminuiu 1 no registrador {reg} e desviou para {next_label}"
 
         # Como se fosse o else do java, serve para tratar valores inesperados nos cases anteriores
         case _:
-            print(next_label)
+            #print(next_label)
             raise ValueError(f"Comando inválido: {command_token}")
         
 
@@ -134,3 +140,5 @@ def sub_x(registers: dict, reg: int):
 
 def zero_x(registers: dict, reg: int):
     return registers[reg] == 0
+
+
