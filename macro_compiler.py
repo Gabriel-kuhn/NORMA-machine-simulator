@@ -29,10 +29,8 @@ def expand_macros(program_lines):
         if "copy_" in instruction:
             expanded, next_free_label = copy(tokens, expanded, label, next_free_label)
 
-
         elif "clear_" in instruction:
             expanded, next_free_label = clear(tokens, expanded, label, next_free_label)
-
 
         elif "mult_" in instruction:
             expanded, next_free_label = multiply(tokens, expanded, label, next_free_label)
@@ -221,8 +219,8 @@ def max(tokens, expanded, l1, next_free_label):
     # 4: se zero_e então vá_para 8 senão vá_para 5
     # 5: faça sub_d vá_para 6
     # 6: faça sub_e vá_para 3
-    # 7: faça copy_a_c vá_para 50
-    # 8: faça copy_b_c vá_para 50
+    # 7: faça copy_b_c vá_para 50
+    # 8: faça copy_a_c vá_para 50
 
     expanded, next_free_label = copy(['faça', f'copy_{a}_{d}', 'vá_para', l2], expanded, l1, next_free_label)
     expanded, next_free_label = copy(['faça', f'copy_{b}_{e}', 'vá_para', l3], expanded, l2, next_free_label)
