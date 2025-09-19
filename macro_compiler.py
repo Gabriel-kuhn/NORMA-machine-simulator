@@ -1,8 +1,14 @@
+# São os registradores auxiliares que usamos nas macros
+MACRO_REG_X = "x"
+MACRO_REG_Y = "y"
+MACRO_REG_Z = "z"
 
-MACRO_X = "x"
+# DICA EXTREMAMENTE IMPORTANTE:
+# quando for fazer uma macro, não pode usar os reg auxiliares que já são usados em outro
+# PORQUE: se você usar uma macro dentro de outra macro, os regs aux vão bugar ;-;
 
 def start_macro_aux_registers():
-    return (MACRO_X, "i", "j")
+    return (MACRO_REG_X, MACRO_REG_Y, MACRO_REG_Z)
 
 def expand_macros(program_lines):
     expanded = []
@@ -46,7 +52,7 @@ def clear(tokens, expanded, l1, next_free_label):
 
     return expanded, next_free_label
     
-
+# Precisa dos auxiliares: X
 def copy(tokens, expanded, l1, next_free_label):
     
     macro_operation = tokens[1]        
@@ -54,7 +60,7 @@ def copy(tokens, expanded, l1, next_free_label):
     final_jump = int(tokens[3])
 
 
-    x = MACRO_X 
+    x = MACRO_REG_X 
     
     expanded, next_free_label = clear(
         ['faça',"clear_x", "vá_para", next_free_label+1], expanded, l1, next_free_label
@@ -83,16 +89,19 @@ def copy(tokens, expanded, l1, next_free_label):
     return expanded, next_free_label
 
 
-
+# Precisa dos auxiliares: Y, Z
 def multiply(tokens, expanded, l1, next_free_label):
     final_jump = int(tokens[3])
 
+    aux = tokens[1]
+    aux = aux.split("_")
     # Registradores usados
-    a = "a"
-    b = "b"
-    c = "c"
-    i = "i"
-    j = "j"
+    # VOu chama-los de a, b, c pq fica mais fácil de compreender o código
+    a = aux[1] # vai pegar o 1º registrador passado
+    b = aux[2] # vai pegar o 2º registrador passado
+    c = aux[3]  # vai pegar o 3º passado, que vai ser o destino do resultado
+    i = MACRO_REG_Y
+    j = MACRO_REG_Z # chamei de j e i pq normalmente quando fazemos loops usamos essas duas variáveis, mas vão usar outros registradores auxiliares
 
     # Preparar rótulos auxiliares
     l2 = next_free_label
@@ -113,6 +122,8 @@ def multiply(tokens, expanded, l1, next_free_label):
     # 6: se zero_j então vá_para 3 senão vá_para 7
     # 7: sub_j vá_para 8
     # 8: add_c vá_para 6
+
+    # Dica top: lembrar que não precisa zerar os registradores auxiliares, pq o copy já faz isso
 
     expanded, next_free_label = clear(['faça', f'clear_{c}', 'vá_para', l2], expanded, l1, next_free_label)
     expanded, next_free_label = copy(['faça', f'copy_{a}_{i}', 'vá_para', l3], expanded, l2, next_free_label)
