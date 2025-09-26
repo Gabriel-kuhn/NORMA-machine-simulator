@@ -22,6 +22,18 @@ def main():
         name = chr(ord('a') + i)
         registers[name] = val
 
+    # Antes de inicarmos o programa precisamos ver se os registradores usados pelo usuário não
+    # vão conflitar com os registradores que usamos para as macros
+    reserved = set(start_macro_aux_registers())
+    conflict = reserved.intersection(registers.keys())
+    if conflict:
+        print(f"ERRO: Os registradores {', '.join(conflict)} são reservados para uso interno das macros.")
+        return
+
+    # Agora adicionamos os auxiliares (se passou na validação)
+    for aux in reserved:
+        registers[aux] = 0
+
     # Vamos adicionar a nossa lista de registradores os auxiliares das macros (vão sempre inicializar em 0)
     for aux in start_macro_aux_registers():
         registers[aux] = 0

@@ -23,6 +23,11 @@ def run(registers: dict, typed_lines: list):
     try:
         interpret(registers, program, program_counter)
 
+    
+    except ValueError as e:
+        # Se der erro de usar um registrador sem ter declarado ele cai aqui
+        print(f"\nERRO: {e}")
+
     # Parada do programa quando rótulo não existe
     except KeyError as error:
         # Como o nosso erro ocorre quando é usado um valor fora do array de operações
@@ -66,6 +71,7 @@ def interpret(registers: dict, program: dict, current_label: int):
 
         case NormaCommand.ZERO:
             reg = tokenList[1][-1]  # pega a letra do registrador (segundo item zero_b e pega ultimo digito b) assim sabemos o registrador da operação 
+            validateRegister(registers, reg)   # antes de usar o registrador, precisamos validar se ele foi declarado corretamente
             next_label_true = int(tokenList[4])   # registrador quando for verdadeiro
             next_label_false = int(tokenList[7])  # registrador quando for falso
 
@@ -78,13 +84,15 @@ def interpret(registers: dict, program: dict, current_label: int):
             
         case NormaCommand.ADD:
             reg = tokenList[1][-1]  # pega a letra do registrador (segundo item add_b e pega ultimo digito b) assim sabemos o registrador da operação 
+            validateRegister(registers, reg)   # antes de usar o registrador, precisamos validar se ele foi declarado corretamente
             add_x(registers, reg)
             next_label = int(tokenList[3])  # pega o rótulo de "vá_para"
             computed_op_desc = f"subiu 1 no registrador {reg} e desviou para {next_label}"
 
 
         case NormaCommand.SUB:
-            reg = tokenList[1][-1] # pega a letra do registrador (segundo item sub_b e pega ultimo digito b) assim sabemos o registrador da operação 
+            reg = tokenList[1][-1]  # pega a letra do registrador (segundo item sub_b e pega ultimo digito b) assim sabemos o registrador da operação 
+            validateRegister(registers, reg)   # antes de usar o registrador, precisamos validar se ele foi declarado corretamente
             sub_x(registers, reg)
             next_label = int(tokenList[3])  # pega o rótulo de "vá_para"
             computed_op_desc = f"diminuiu 1 no registrador {reg} e desviou para {next_label}"
@@ -107,6 +115,12 @@ def interpret(registers: dict, program: dict, current_label: int):
     interpret(registers, program, next_label)
 
     
+# .:| === Função para validar se o registrador usado foi declarado |:. === 
+def validateRegister(registers: dict, reg: str):
+    if reg not in registers:
+        raise ValueError(
+            f"O programa tentou usar o registrador '{reg}' porém ele não foi declarado no arquivo do programa!"
+        )
 
 
 # .:| === Função para pegar o token do comando |:. === 
