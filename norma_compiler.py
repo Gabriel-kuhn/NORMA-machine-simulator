@@ -15,6 +15,10 @@ def run(registers: dict, typed_lines: list):
     # Começa pelo menor rótulo, normalmente é 0 ou 1 mas o usuário pode acabar querendo começar pelo 7...
     program_counter = min(program.keys())
 
+    # Mostra o estado inicial da máquina
+    formated_regs = tuple(registers.values())
+    print(f"({program_counter}, {formated_regs})")
+
     # Aqui está toda jogada, vamos iniciar somente uma instrução. Faremos o resto recursivo
     # Porque cada instrução nela mesma contém para qual rótulo deve seguir, então ela mesma vai decidir a próxima etapa
     # o try é para a codinção de parada. Na NORMA, quando queremos terminar o programa, nós dizemos que vamos 
